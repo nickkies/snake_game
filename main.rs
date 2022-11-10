@@ -1,16 +1,16 @@
 fn main() {
-    let custom_num = 98_000;
-    // hexadecimal
-    // 16^1 * 15 + 16^0 * 10 = 250
-    let hex_num = 0xfa;
-    let bin_num = 0b0010_1011;
-    // UTF table
-    // 0x41
-    // 16^1 * 4 + 16^0 * 1 = 65
-    let byte_num = b'A';
+    let float_num: f32 = 3.14;
+    let float_num_2 = 3.2;
 
-    println!("{}", custom_num);
-    println!("{}", hex_num);
-    println!("{}", bin_num);
-    println!("{}", byte_num);
+    let tup = (float_num + float_num_2, "Hi", "there");
+    println!("{}", tup.1);
+
+    let (_, _, c) = tup;
+    println!("{}", c);
+
+    let x: [i32; 4] = [1, 5, 6, 7];
+    println!("{}", x[2]);
+
+    let y = [2; 6]; // [2, 2, 2, 2, 2, 2]
+    println!("{}", y[5]);
 }
