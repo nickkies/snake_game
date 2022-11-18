@@ -1,11 +1,19 @@
 fn main() {
     let message = String::from("Hello");
-    print_message(message);
+    let message = extend_message(message);
 
-    // error
-    // println!("{}", message);
+    let age = 300;
+    extend_age(age);
+    print!("{}", age);
+
+    println!("{}", message);
 }
 
-fn print_message(a: String) {
-    println!("{}", a);
-} // drop
+fn extend_message(mut a: String) -> String {
+    a.push_str(" World");
+    a
+}
+
+fn extend_age(mut _a: u32) {
+    _a += 100;
+}
