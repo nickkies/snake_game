@@ -1,19 +1,11 @@
 fn main() {
-    let message = String::from("Hello");
-    let message = extend_message(message);
+    let mut message = String::from("Hello");
+    let message_2 = &mut message;
 
-    let age = 300;
-    extend_age(age);
-    print!("{}", age);
+    message_2.push_str(" World");
 
-    println!("{}", message);
-}
+    println!("{}", message_2); // mutable borrow
+    println!("{}", message); // immutable borrow
 
-fn extend_message(mut a: String) -> String {
-    a.push_str(" World");
-    a
-}
-
-fn extend_age(mut _a: u32) {
-    _a += 100;
+    // println!("{}", message_2); // ㅠㅠ
 }
