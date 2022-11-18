@@ -1,11 +1,13 @@
 fn main() {
     let mut message = String::from("Hello");
+    let message_3 = &message;
+    println!("{}", message_3);
     let message_2 = &mut message;
 
-    message_2.push_str(" World");
+    unpredictable_mutate(message_2);
+    println!("{}", message);
+}
 
-    println!("{}", message_2); // mutable borrow
-    println!("{}", message); // immutable borrow
-
-    // println!("{}", message_2); // ㅠㅠ
+fn unpredictable_mutate(val: &mut String) {
+    val.push_str("_unpredictable");
 }
