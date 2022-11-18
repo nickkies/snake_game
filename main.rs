@@ -1,16 +1,19 @@
 fn main() {
-    let float_num: f32 = 3.14;
-    let float_num_2 = 3.2;
+    let a = 10;
+    let b = a;
+    let _c = 15; // copy
+    let sum = add(a, b);
 
-    let tup = (float_num + float_num_2, "Hi", "there");
-    println!("{}", tup.1);
+    println!("{}", sum);
 
-    let (_, _, c) = tup;
-    println!("{}", c);
+    let message = String::from("Hello");
+    let message_2 = message; // move
 
-    let x: [i32; 4] = [1, 5, 6, 7];
-    println!("{}", x[2]);
+    // error
+    // println!("{}", message);
+    println!("{}", message_2);
+}
 
-    let y = [2; 6]; // [2, 2, 2, 2, 2, 2]
-    println!("{}", y[5]);
+fn add(x: u32, y: u32) -> u32 {
+    x + y
 }
