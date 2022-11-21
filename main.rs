@@ -1,11 +1,6 @@
 fn main() {
-    let mut message = String::from("Hello");
-    let message_3 = message.clone();
+    let _num = 32; // stack
+    let num_2 = Box::new(100); // heap
 
-    // let slice = &message[2..=4];
-
-    message.clear();
-
-    println!("message: {}", message);
-    println!("message_3: {}", message_3);
+    println!("{}", num_2);
 }
