@@ -1,4 +1,4 @@
-use snake_game::{log_info, log_info_2, Animal, Log, Person, PersonId};
+use snake_game::learning_rust::{log_info, log_info_2, Animal, Log, Person, PersonId};
 
 fn main() {
     Person::some_function();
@@ -24,7 +24,10 @@ fn main() {
 
     println!(
         "{} {} {} {:?}",
-        person.name, person.last_name, person.age, person.id
+        person.name(),
+        person.last_name,
+        person.age,
+        person.id
     );
     person_3.display_info();
 
