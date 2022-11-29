@@ -1,4 +1,9 @@
+mod another_lib;
+
+use another_lib::another_mod;
+
 fn outsider() {
+    another_mod::another_fn();
     println!("outsider fn");
 }
 
