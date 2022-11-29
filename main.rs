@@ -87,6 +87,12 @@ fn main() {
 }
 
 fn check_persion_id(id: PersonId) {
+    if let PersonId::Passport(x, y, z) = id {
+        println!("It matching Passport {} {} {}", x, y, z);
+    } else {
+        println!("It doesn't match!");
+    }
+
     match id {
         PersonId::Passport(x, _, _) => {
             println!("Passport: first value - {}", x);
