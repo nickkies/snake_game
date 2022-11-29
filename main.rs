@@ -11,6 +11,8 @@ struct Person {
     id: PersonId,
 }
 
+struct Animal(String, u32, String);
+
 impl Person {
     fn new() -> Person {
         Person {
@@ -101,4 +103,10 @@ fn check_persion_id(id: PersonId) {
             println!("ID Card - {}", x);
         }
     }
+
+    let animal = Animal("dog".to_string(), 10, "bulldog".to_string());
+    println!("{}", animal.0);
+
+    let Animal(animal_type, _, _) = animal;
+    println!("{}", animal_type);
 }
