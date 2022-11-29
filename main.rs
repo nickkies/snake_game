@@ -1,7 +1,14 @@
+#[derive(Debug)]
+enum PersonId {
+    Passport(u32, u32, u32),
+    IdentityCard(String),
+}
+
 struct Person {
     name: String,
     last_name: String,
     age: u32,
+    id: PersonId,
 }
 
 impl Person {
@@ -10,14 +17,16 @@ impl Person {
             name: "Default".to_string(),
             last_name: "Default".to_string(),
             age: 0,
+            id: PersonId::IdentityCard("XY1221245".to_string()),
         }
     }
 
-    fn from(name: String, last_name: String, age: u32) -> Person {
+    fn from(name: String, last_name: String, age: u32, id: PersonId) -> Person {
         Person {
             name,
             last_name,
             age,
+            id,
         }
     }
 
@@ -37,6 +46,13 @@ impl Person {
     fn change_age(&mut self, new_age: u32) {
         self.age = new_age;
     }
+
+    fn display_info(&self) {
+        println!(
+            "{} {} {} {:?}",
+            self.name, self.last_name, self.age, self.id
+        );
+    }
 }
 
 fn main() {
@@ -46,14 +62,37 @@ fn main() {
         name: "Nick".to_string(),
         last_name: "Kim".to_string(),
         age: 31,
+        id: PersonId::IdentityCard("EW1241241".to_string()),
     };
 
     let person_2 = Person::new();
-    let mut person_3 = Person::from(String::from("Nick2"), String::from("Kim"), 6);
+    let mut person_3 = Person::from(
+        String::from("Nick2"),
+        String::from("Kim"),
+        6,
+        PersonId::Passport(123, 124, 233),
+    );
 
     person_2.display_age();
 
     person_3.change_age(7);
 
-    println!("{}, {} , {}", person.name, person.last_name, person.age);
+    println!(
+        "{} {} {} {:?}",
+        person.name, person.last_name, person.age, person.id
+    );
+    person_3.display_info();
+
+    check_persion_id(person.id);
+}
+
+fn check_persion_id(id: PersonId) {
+    match id {
+        PersonId::Passport(x, _, _) => {
+            println!("Passport: first value - {}", x);
+        }
+        PersonId::IdentityCard(x) => {
+            println!("ID Card - {}", x);
+        }
+    }
 }
