@@ -1,3 +1,13 @@
+trait Log {
+    fn display_info(&self);
+    // fn alert_somethig() {
+    //     println!("Default implementation");
+    // }
+    fn alert_self(&self) {
+        println!("Default");
+    }
+}
+
 #[derive(Debug)]
 enum PersonId {
     Passport(u32, u32, u32),
@@ -12,6 +22,24 @@ struct Person {
 }
 
 struct Animal(String, u32, String);
+
+impl Log for Animal {
+    fn display_info(&self) {
+        println!("{}", &self.0);
+    }
+    // fn alert_somethig() {
+    //     println!("Impl default");
+    // }
+}
+
+impl Log for Person {
+    fn display_info(&self) {
+        println!(
+            "{} {} {} {:?}",
+            self.name, self.last_name, self.age, self.id
+        );
+    }
+}
 
 impl Person {
     fn new() -> Person {
@@ -49,12 +77,12 @@ impl Person {
         self.age = new_age;
     }
 
-    fn display_info(&self) {
+    /* fn display_info(&self) {
         println!(
             "{} {} {} {:?}",
             self.name, self.last_name, self.age, self.id
         );
-    }
+    } */
 }
 
 fn main() {
@@ -86,6 +114,14 @@ fn main() {
     person_3.display_info();
 
     check_persion_id(person.id);
+
+    // Animal::alert_somethig();
+    // Person::alert_somethig();
+
+    person_2.alert_self();
+
+    log_info(person_2);
+    log_info_2(&person_3);
 }
 
 fn check_persion_id(id: PersonId) {
@@ -105,8 +141,27 @@ fn check_persion_id(id: PersonId) {
     }
 
     let animal = Animal("dog".to_string(), 10, "bulldog".to_string());
-    println!("{}", animal.0);
+
+    animal.display_info();
 
     let Animal(animal_type, _, _) = animal;
     println!("{}", animal_type);
+}
+
+// impl makes the compiler determine type at the compile time
+// it will create multiple version of the function, depending on
+// how many types Log trait implements (Person, Animal)
+fn log_info(val: impl Log) {
+    val.alert_self();
+}
+// fn log_info_asdgerq(val: Person) {
+//     val.alert_self();
+// }
+// fn log_info_gdasg(val: Animal) {
+//     val.alert_self();
+// }
+
+// dession of exactly which function to call at the runtime
+fn log_info_2(val: &dyn Log) {
+    val.alert_self();
 }
