@@ -8,6 +8,7 @@ fn outsider() {
 }
 
 pub mod learning_rust {
+    use std::fmt;
 
     mod top_level {
         pub fn hi_there() {
@@ -30,10 +31,22 @@ pub mod learning_rust {
         }
     }
 
-    #[derive(Debug)]
     pub enum PersonId {
         Passport(u32, u32, u32),
         IdentityCard(String),
+    }
+
+    impl fmt::Display for PersonId {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+            match self {
+                PersonId::IdentityCard(x) => {
+                    write!(f, "IdentityCard: {}", x)
+                }
+                PersonId::Passport(x, y, z) => {
+                    write!(f, "Passport: {} {} {}", x, y, z)
+                }
+            }
+        }
     }
 
     pub struct Person {
@@ -66,10 +79,7 @@ pub mod learning_rust {
             top_level::hi_there();
             top_level::low_level::hello_world();
 
-            println!(
-                "{} {} {} {:?}",
-                self.name, self.last_name, self.age, self.id
-            );
+            println!("{} {} {} {}", self.name, self.last_name, self.age, self.id);
         }
     }
 

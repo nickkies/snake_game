@@ -23,7 +23,7 @@ fn main() {
     person_3.change_age(7);
 
     println!(
-        "{} {} {} {:?}",
+        "{} {} {} {}",
         person.name(),
         person.last_name,
         person.age,
