@@ -1,5 +1,10 @@
 async function init() {
+  const memory = new WebAssembly.Memory({ initial: 1 });
+
   const importObject = {
+    js: {
+      mem: memory,
+    },
     console: {
       log: () => {
         console.log('Just logging semething!');
@@ -14,18 +19,14 @@ async function init() {
   const buffer = await res.arrayBuffer();
   const byteArray = new Int8Array(buffer);
 
-  // debugger;
-  const wasm = await WebAssembly.instantiate(byteArray.buffer, importObject);
-  const sumFunction = wasm.instance.exports.sum;
-  const result = sumFunction(100, 15);
-  console.log(result);
+  console.log(memory);
+  debugger;
+  await WebAssembly.instantiate(byteArray.buffer, importObject);
+  console.log(memory);
 
-  const wasmMemory = wasm.instance.exports.mem;
-  console.dir(wasmMemory);
-
-  const uint8Array = new Uint8Array(wasmMemory.buffer, 0, 2);
-
+  const uint8Array = new Uint8Array(memory.buffer, 0, 2);
   const hiText = new TextDecoder().decode(uint8Array);
+
   console.log(hiText);
 }
 
