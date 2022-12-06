@@ -1,9 +1,11 @@
 import init, { World } from 'snake_game';
 
-init().then((_) => {
-  const CELL_SIZE = 25;
+const CELL_SIZE = 25;
+const WORLD_WIDTH = 16;
+let fps = 10;
 
-  const world = World.new();
+init().then((_) => {
+  const world = World.new(WORLD_WIDTH);
   const worldWidth = world.width();
 
   const canvas = <HTMLCanvasElement>document.getElementById('snake-canvas');
@@ -56,7 +58,7 @@ init().then((_) => {
       world.update();
       paint();
       requestAnimationFrame(update);
-    }, 100);
+    }, 1000 / fps);
   };
 
   paint();
