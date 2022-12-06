@@ -5,13 +5,19 @@ use wee_alloc::WeeAlloc;
 static ALLOC: WeeAlloc = WeeAlloc::INIT;
 
 #[wasm_bindgen]
-pub fn greet(num: i32) {
-    alert(num);
+pub struct World {
+    width: usize,
 }
 
 #[wasm_bindgen]
-extern {
-  pub fn alert(num: i32);
+impl World {
+    pub fn new() -> World {
+        World { width: 16 }
+    }
+
+    pub fn width(&self) -> usize {
+        self.width
+    }
 }
 
 // wasm-pack build --target web
