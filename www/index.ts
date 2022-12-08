@@ -1,11 +1,17 @@
-import init, { World, Direction } from 'snake_game';
+import init, { World, Direction, Mode } from 'snake_game';
 
 const CELL_SIZE = 25;
 const WORLD_WIDTH = 16;
+const INIT_SNAKE_SIZE = 3;
+const IS_MODE_FINITE = false;
 let fps = 10;
 
-init().then((_) => {
-  const world = World.new(WORLD_WIDTH);
+init().then((wasm) => {
+  const world = World.new(
+    WORLD_WIDTH,
+    INIT_SNAKE_SIZE,
+    IS_MODE_FINITE ? Mode.Infinite : Mode.Finite
+  );
   const worldWidth = world.width();
 
   const canvas = <HTMLCanvasElement>document.getElementById('snake-canvas');
@@ -54,16 +60,24 @@ init().then((_) => {
   };
 
   const drawSnake = () => {
-    const snakeIdx = world.snake_head_idx();
-
-    ctx.beginPath();
-
-    ctx.fillRect(
-      (snakeIdx % worldWidth) * CELL_SIZE,
-      Math.floor(snakeIdx / worldWidth) * CELL_SIZE,
-      CELL_SIZE,
-      CELL_SIZE
+    const snakeCells = new Uint32Array(
+      wasm.memory.buffer,
+      world.snake_cells(),
+      world.snake_length()
     );
+
+    snakeCells.forEach((cellIdx, i) => {
+      ctx.fillStyle = i ? '#000' : '#7878db';
+
+      ctx.beginPath();
+
+      ctx.fillRect(
+        (cellIdx % worldWidth) * CELL_SIZE,
+        Math.floor(cellIdx / worldWidth) * CELL_SIZE,
+        CELL_SIZE,
+        CELL_SIZE
+      );
+    });
 
     ctx.stroke();
   };
@@ -76,7 +90,7 @@ init().then((_) => {
   const update = () => {
     setTimeout(() => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      world.update();
+      world.step();
       paint();
       requestAnimationFrame(update);
     }, 1000 / fps);

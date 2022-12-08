@@ -14,7 +14,14 @@ pub enum Direction {
     Left,
 }
 
-struct SnakeCell(usize);
+#[wasm_bindgen]
+#[derive(PartialEq)]
+pub enum Mode {
+    Finite,
+    Infinite,
+}
+
+pub struct SnakeCell(usize);
 
 struct Snake {
     body: Vec<SnakeCell>,
@@ -22,9 +29,15 @@ struct Snake {
 }
 
 impl Snake {
-    fn new(spawn_index: usize) -> Snake {
+    fn new(spawn_index: usize, size: usize) -> Snake {
+        let mut body = vec![];
+
+        for i in 0..size {
+            body.push(SnakeCell(spawn_index - i));
+        }
+
         Snake {
-            body: vec![SnakeCell(spawn_index)],
+            body,
             direction: Direction::Right,
         }
     }
@@ -32,16 +45,20 @@ impl Snake {
 
 #[wasm_bindgen]
 pub struct World {
+    mode: Mode,
     width: usize,
+    size: usize,
     snake: Snake,
 }
 
 #[wasm_bindgen]
 impl World {
-    pub fn new(width: usize) -> World {
+    pub fn new(width: usize, size: usize, mode: Mode) -> World {
         World {
+            mode,
             width,
-            snake: Snake::new(rand::thread_rng().gen_range(0..width * width)),
+            size: width * width,
+            snake: Snake::new(rand::thread_rng().gen_range(0..width * width), size),
         }
     }
 
@@ -49,39 +66,73 @@ impl World {
         self.width
     }
 
-    pub fn snake_head_idx(&self) -> usize {
-        self.snake.body[0].0
-    }
-
     pub fn change_snake_dir(&mut self, direction: Direction) {
         self.snake.direction = direction;
     }
 
-    pub fn update(&mut self) {
+    pub fn snake_length(&self) -> usize {
+        self.snake.body.len()
+    }
+
+    pub fn snake_cells(&self) -> *const SnakeCell {
+        self.snake.body.as_ptr()
+    }
+
+    pub fn step(&mut self) {
+        let next_cell = self.gen_next_snake_cell();
+        self.snake.body[0] = next_cell;
+    }
+
+    fn gen_next_snake_cell(&self) -> SnakeCell {
         let snake_idx = self.snake_head_idx();
-        let (row, col) = self.index_to_cell(snake_idx);
+        let row = snake_idx / self.width;
 
-        let (row, col) = match self.snake.direction {
-            Direction::Up => ((row - 1) % self.width, col),
-            Direction::Right => (row, (col + 1) % self.width),
-            Direction::Left => (row, (col - 1) % self.width),
-            Direction::Down => ((row + 1) % self.width, col),
+        return match self.snake.direction {
+            Direction::Up => {
+                let treshold = snake_idx - (row * self.width);
+                if snake_idx == treshold {
+                    self.mode_test(SnakeCell((self.size - self.width) + treshold))
+                } else {
+                    SnakeCell(snake_idx - self.width)
+                }
+            }
+            Direction::Right => {
+                let treshold = (row + 1) * self.width;
+                if snake_idx + 1 == treshold {
+                    self.mode_test(SnakeCell(treshold - self.width))
+                } else {
+                    SnakeCell(snake_idx + 1)
+                }
+            }
+            Direction::Left => {
+                let treshold = row * self.width;
+                if snake_idx == treshold {
+                    self.mode_test(SnakeCell(treshold + (self.width - 1)))
+                } else {
+                    SnakeCell(snake_idx - 1)
+                }
+            }
+            Direction::Down => {
+                let treshold = snake_idx + ((self.width - row) * self.width);
+                if snake_idx + self.width == treshold {
+                    self.mode_test(SnakeCell(treshold - ((row + 1) * self.width)))
+                } else {
+                    SnakeCell(snake_idx + self.width)
+                }
+            }
         };
-
-        let next_idx = self.cell_to_index(row, col);
-        self.set_snake_head(next_idx);
     }
 
-    fn set_snake_head(&mut self, idx: usize) {
-        self.snake.body[0].0 = idx;
+    fn mode_test(&self, snake_cell: SnakeCell) -> SnakeCell {
+        if self.mode == Mode::Finite {
+            snake_cell
+        } else {
+            SnakeCell(self.size)
+        }
     }
 
-    fn index_to_cell(&self, idx: usize) -> (usize, usize) {
-        (idx / self.width, idx % self.width)
-    }
-
-    fn cell_to_index(&self, row: usize, col: usize) -> usize {
-        (row * self.width) + col
+    fn snake_head_idx(&self) -> usize {
+        self.snake.body[0].0
     }
 }
 
