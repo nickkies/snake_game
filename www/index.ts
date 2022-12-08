@@ -1,17 +1,12 @@
-import init, { World, Direction, Mode } from 'snake_game';
+import init, { World, Direction } from 'snake_game';
 
 const CELL_SIZE = 25;
 const WORLD_WIDTH = 16;
 const INIT_SNAKE_SIZE = 3;
-const IS_MODE_FINITE = false;
 let fps = 10;
 
 init().then((wasm) => {
-  const world = World.new(
-    WORLD_WIDTH,
-    INIT_SNAKE_SIZE,
-    IS_MODE_FINITE ? Mode.Infinite : Mode.Finite
-  );
+  const world = World.new(WORLD_WIDTH, INIT_SNAKE_SIZE);
   const worldWidth = world.width();
 
   const canvas = <HTMLCanvasElement>document.getElementById('snake-canvas');
