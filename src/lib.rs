@@ -14,6 +14,7 @@ pub enum Direction {
     Left,
 }
 
+#[derive(Clone)]
 pub struct SnakeCell(usize);
 
 struct Snake {
@@ -72,8 +73,13 @@ impl World {
     }
 
     pub fn step(&mut self) {
+        let tmp = self.snake.body.clone();
         let next_cell = self.gen_next_snake_cell();
         self.snake.body[0] = next_cell;
+
+        for i in 1..self.snake_length() {
+            self.snake.body[i] = SnakeCell(tmp[i - 1].0);
+        }
     }
 
     fn gen_next_snake_cell(&self) -> SnakeCell {
