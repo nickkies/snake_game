@@ -22,11 +22,12 @@ struct Snake {
 }
 
 impl Snake {
-    fn new(spawn_index: usize, size: usize) -> Snake {
+    fn new(size: usize, len: usize) -> Snake {
         let mut body = vec![];
+        let random_idx = rand::thread_rng().gen_range(0..size);
 
-        for i in 0..size {
-            body.push(SnakeCell(spawn_index - i));
+        for i in 0..len {
+            body.push(SnakeCell(random_idx - i));
         }
 
         Snake {
@@ -45,11 +46,12 @@ pub struct World {
 
 #[wasm_bindgen]
 impl World {
-    pub fn new(width: usize, size: usize) -> World {
+    pub fn new(width: usize, len: usize) -> World {
+        let size = width * width;
         World {
             width,
-            size: width * width,
-            snake: Snake::new(rand::thread_rng().gen_range(0..width * width), size),
+            size,
+            snake: Snake::new(size, len),
         }
     }
 

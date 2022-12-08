@@ -2,11 +2,11 @@ import init, { World, Direction } from 'snake_game';
 
 const CELL_SIZE = 25;
 const WORLD_WIDTH = 16;
-const INIT_SNAKE_SIZE = 3;
+const INIT_SNAKE_LEN = 3;
 let fps = 10;
 
 init().then((wasm) => {
-  const world = World.new(WORLD_WIDTH, INIT_SNAKE_SIZE);
+  const world = World.new(WORLD_WIDTH, INIT_SNAKE_LEN);
   const worldWidth = world.width();
 
   const canvas = <HTMLCanvasElement>document.getElementById('snake-canvas');
