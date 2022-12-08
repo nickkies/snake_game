@@ -38,6 +38,10 @@ init().then((wasm) => {
 
   const drawWorld = () => {
     ctx.beginPath();
+    ctx.fillStyle = '#dbdb78';
+    ctx.strokeStyle = '#78aadb';
+
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // 세로 줄
     for (let x = 0; x < worldWidth + 1; x++) {
@@ -62,24 +66,39 @@ init().then((wasm) => {
     );
 
     snakeCells.forEach((cellIdx, i) => {
-      ctx.fillStyle = i ? '#000' : '#7878db';
+      ctx.fillStyle = i ? '#db78db' : '#db7878';
 
       ctx.beginPath();
 
-      ctx.fillRect(
-        (cellIdx % worldWidth) * CELL_SIZE,
-        Math.floor(cellIdx / worldWidth) * CELL_SIZE,
-        CELL_SIZE,
-        CELL_SIZE
-      );
+      fillRect(cellIdx);
     });
 
     ctx.stroke();
   };
 
+  const drawReward = () => {
+    const idx = world.reward_cell();
+
+    ctx.beginPath();
+    ctx.fillStyle = '#7878db';
+    fillRect(idx);
+
+    ctx.stroke();
+  };
+
+  const fillRect = (idx: number) => {
+    ctx.fillRect(
+      (idx % worldWidth) * CELL_SIZE,
+      Math.floor(idx / worldWidth) * CELL_SIZE,
+      CELL_SIZE,
+      CELL_SIZE
+    );
+  };
+
   const paint = () => {
     drawWorld();
     drawSnake();
+    drawReward();
   };
 
   const update = () => {

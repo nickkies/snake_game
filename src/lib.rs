@@ -14,7 +14,7 @@ pub enum Direction {
     Left,
 }
 
-#[derive(Clone, Copy)]
+#[derive(PartialEq, Clone, Copy)]
 pub struct SnakeCell(usize);
 
 struct Snake {
@@ -44,22 +44,39 @@ pub struct World {
     size: usize,
     snake: Snake,
     next_cell: Option<SnakeCell>,
+    reward_cell: usize,
 }
 
 #[wasm_bindgen]
 impl World {
     pub fn new(width: usize, len: usize) -> World {
         let size = width * width;
+        let snake = Snake::new(size, len);
+        let mut reward_cell;
+
+        loop {
+            reward_cell = rand::thread_rng().gen_range(0..size);
+
+            if !snake.body.contains(&SnakeCell(reward_cell)) {
+                break;
+            }
+        }
+
         World {
             width,
             size,
-            snake: Snake::new(size, len),
+            snake,
             next_cell: None,
+            reward_cell,
         }
     }
 
     pub fn width(&self) -> usize {
         self.width
+    }
+
+    pub fn reward_cell(&self) -> usize {
+        self.reward_cell
     }
 
     pub fn change_snake_dir(&mut self, direction: Direction) {
