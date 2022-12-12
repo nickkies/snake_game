@@ -1,4 +1,4 @@
-import init, { World, Direction } from 'snake_game';
+import init, { World, Direction, GameStatus } from 'snake_game';
 
 const CELL_SIZE = 25;
 const WORLD_WIDTH = 16;
@@ -129,6 +129,10 @@ init().then((wasm: { memory: { buffer: ArrayBufferLike } }) => {
   };
 
   const play = () => {
+    const status = world.game_status();
+
+    if (status === GameStatus.Won || status === GameStatus.Lost) return;
+
     setTimeout(() => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       world.step();
