@@ -5,15 +5,27 @@ const WORLD_WIDTH = 16;
 const INIT_SNAKE_LEN = 3;
 let fps = 10;
 
-init().then((wasm) => {
+init().then((wasm: { memory: { buffer: ArrayBufferLike } }) => {
   const world = World.new(WORLD_WIDTH, INIT_SNAKE_LEN);
   const worldWidth = world.width();
 
+  const gameControlBtn = document.getElementById('game-control-btn');
+  const gameStatus = document.getElementById('game-status');
   const canvas = <HTMLCanvasElement>document.getElementById('snake-canvas');
   const ctx = canvas.getContext('2d');
 
   canvas.height = worldWidth * CELL_SIZE;
   canvas.width = worldWidth * CELL_SIZE;
+
+  gameControlBtn.addEventListener('click', () => {
+    if (world.game_status()) {
+      location.reload();
+    } else {
+      gameControlBtn.innerText = 'Restart';
+      world.start_game();
+      play();
+    }
+  });
 
   document.addEventListener('keydown', (e) => {
     switch (e.code) {
@@ -65,13 +77,17 @@ init().then((wasm) => {
       world.snake_length()
     );
 
-    snakeCells.forEach((cellIdx, i) => {
-      ctx.fillStyle = i ? '#db78db' : '#db7878';
+    snakeCells
+      // .filter((cellIdx, i) => !(i > 0 && cellIdx === snakeCells[0]))
+      .slice()
+      .reverse()
+      .forEach((cellIdx, i) => {
+        ctx.fillStyle = i === snakeCells.length - 1 ? '#db78db' : '#db7878';
 
-      ctx.beginPath();
+        ctx.beginPath();
 
-      fillRect(cellIdx);
-    });
+        fillRect(cellIdx);
+      });
 
     ctx.stroke();
   };
@@ -99,21 +115,25 @@ init().then((wasm) => {
     );
   };
 
+  const drawGameStatus = () => {
+    gameStatus.textContent = world.game_status_text();
+  };
+
   const paint = () => {
     drawWorld();
     drawSnake();
     drawReward();
+    drawGameStatus();
   };
 
-  const update = () => {
+  const play = () => {
     setTimeout(() => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       world.step();
       paint();
-      requestAnimationFrame(update);
+      requestAnimationFrame(play);
     }, 1000 / fps);
   };
 
   paint();
-  update();
 });
