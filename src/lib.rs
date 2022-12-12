@@ -52,8 +52,9 @@ pub struct World {
     size: usize,
     snake: Snake,
     next_cell: Option<SnakeCell>,
-    reward_cell: usize,
+    reward_cell: Option<usize>,
     status: Option<GameStatus>,
+    points: usize,
 }
 
 #[wasm_bindgen]
@@ -69,6 +70,7 @@ impl World {
             snake,
             next_cell: None,
             status: None,
+            points: 0,
         }
     }
 
@@ -76,7 +78,7 @@ impl World {
         self.width
     }
 
-    pub fn reward_cell(&self) -> usize {
+    pub fn reward_cell(&self) -> Option<usize> {
         self.reward_cell
     }
 
@@ -87,6 +89,10 @@ impl World {
             Some(GameStatus::Played) => String::from("playing"),
             None => String::from("No Status"),
         }
+    }
+
+    pub fn points(&self) -> usize {
+        self.points
     }
 
     pub fn game_status(&self) -> Option<GameStatus> {
@@ -141,11 +147,13 @@ impl World {
                     self.status = Some(GameStatus::Lost);
                 }
 
-                if self.reward_cell == self.snake_head_idx() {
+                if self.reward_cell == Some(self.snake_head_idx()) {
                     if len < self.size {
+                        self.points += 1;
                         self.reward_cell = World::gen_reward_cell(self.size, &self.snake.body);
                     } else {
-                        self.reward_cell = 1000;
+                        self.reward_cell = None;
+                        self.status = Some(GameStatus::Won);
                     }
                     self.snake.body.push(SnakeCell(self.snake.body[1].0));
                 }
@@ -198,14 +206,14 @@ impl World {
         self.snake.body[0].0
     }
 
-    fn gen_reward_cell(size: usize, snake_body: &Vec<SnakeCell>) -> usize {
+    fn gen_reward_cell(size: usize, snake_body: &Vec<SnakeCell>) -> Option<usize> {
         let mut reward_cell;
 
         loop {
             reward_cell = rand::thread_rng().gen_range(0..size);
 
             if !snake_body.contains(&SnakeCell(reward_cell)) {
-                return reward_cell;
+                return Some(reward_cell);
             }
         }
     }

@@ -9,8 +9,9 @@ init().then((wasm: { memory: { buffer: ArrayBufferLike } }) => {
   const world = World.new(WORLD_WIDTH, INIT_SNAKE_LEN);
   const worldWidth = world.width();
 
-  const gameControlBtn = document.getElementById('game-control-btn');
+  const points = document.getElementById('points');
   const gameStatus = document.getElementById('game-status');
+  const gameControlBtn = document.getElementById('game-control-btn');
   const canvas = <HTMLCanvasElement>document.getElementById('snake-canvas');
   const ctx = canvas.getContext('2d');
 
@@ -21,7 +22,7 @@ init().then((wasm: { memory: { buffer: ArrayBufferLike } }) => {
     if (world.game_status()) {
       location.reload();
     } else {
-      gameControlBtn.innerText = 'Restart';
+      gameControlBtn.innerText = 'Re-Play';
       world.start_game();
       play();
     }
@@ -117,6 +118,7 @@ init().then((wasm: { memory: { buffer: ArrayBufferLike } }) => {
 
   const drawGameStatus = () => {
     gameStatus.textContent = world.game_status_text();
+    points.textContent = world.points().toString();
   };
 
   const paint = () => {
