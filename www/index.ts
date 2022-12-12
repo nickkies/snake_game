@@ -79,6 +79,10 @@ init().then((wasm) => {
   const drawReward = () => {
     const idx = world.reward_cell();
 
+    if (idx === 1000) {
+      alert('Win!');
+    }
+
     ctx.beginPath();
     ctx.fillStyle = '#7878db';
     fillRect(idx);
