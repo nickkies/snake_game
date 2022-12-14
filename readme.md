@@ -1,6 +1,6 @@
 # Snake Game
 
-[Come on in](https://snakegame.herokuapp.com/)
+[Click to start](https://snakegame.herokuapp.com/)
 
 ## dev script
 
